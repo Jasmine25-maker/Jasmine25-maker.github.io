@@ -2,26 +2,90 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>女扮男装混入男寝 · 游戏开始</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>女扮男装混入男寝 · 手机版</title>
   <style>
-    body { font-family: "Microsoft YaHei", sans-serif; margin: 0; background: #f9f9f9; color: #333; }
-    .container { max-width: 480px; margin: auto; padding: 16px; background: #fff; min-height: 100vh; box-sizing: border-box; }
-    .status-bar { background: #eef6ff; padding: 8px; border-radius: 6px; font-size: 14px; margin-bottom: 12px; text-align: center; }
-    .story { font-size: 16px; line-height: 1.6; white-space: pre-line; }
-    .option { background: #e1f0fa; padding: 12px; border-radius: 6px; margin: 10px 0; text-align: center; cursor: pointer; }
+    body {
+      font-family: "Microsoft YaHei", sans-serif;
+      margin: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+    .container {
+      max-width: 480px;
+      margin: auto;
+      padding: 16px;
+      background: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+    .game-title {
+      font-size: 22px;
+      text-align: center;
+      color: #5d9cec;
+      margin-bottom: 10px;
+    }
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      font-size: 14px;
+      background: #eef6ff;
+      border-radius: 8px;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+    .story {
+      white-space: pre-line;
+      line-height: 1.6;
+      font-size: 16px;
+      flex: 1;
+    }
+    .option {
+      background: #e1f0fa;
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .option:hover {
+      background: #d2e6f7;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 15px;
+    }
+    button {
+      padding: 8px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      background: #5d9cec;
+      color: white;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2 style="text-align:center; color:#5d9cec;">女扮男装混入男寝</h2>
+    <h1 class="game-title">女扮男装混入男寝</h1>
     <div class="status-bar">
-      ❤️ 心情: <span id="mood">80</span> ｜ 💪 勇气: <span id="courage">60</span><br>
-      💖 白景: <span id="bj">50</span> ｜🔥 顾北辰: <span id="gbc">40</span> ｜🎨 沈墨: <span id="sm">30</span>
+      ❤️ 心情: <span id="mood">80</span> ｜💪 勇气: <span id="courage">60</span> <br>
+      💖 白景: <span id="affection_bj">50</span> ｜🔥 顾北辰: <span id="affection_gbc">40</span> ｜🎨 沈墨: <span id="affection_sm">30</span>
     </div>
-    <div class="story" id="story">游戏加载中……</div>
+    <div class="story" id="story">加载中…</div>
     <div id="options"></div>
+    <div class="controls">
+      <button onclick="saveGame()">💾 存档</button>
+      <button onclick="loadGame()">📂 读档</button>
+    </div>
   </div>
 
   <script>
@@ -32,60 +96,77 @@
       currentScene: "start"
     };
 
-    const scenes = {
+    const storyData = {
       start: {
-        text: "你拖着行李箱站在圣罗兰贵族学院门口……\n\n“我真的要女扮男装混进男寝吗？”",
+        text: "你拖着行李箱站在圣罗兰贵族学院的大门前……\n(＞﹏＜)真的要女扮男装混进男寝吗？",
         options: [
-          { text: "推门进入303寝室", next: "firstNight" }
+          { text: "推门进入303寝室", next: "chapter1" }
         ]
       },
-      firstNight: {
-        text: "宿舍灯光昏黄，四个男生回头望向你。\n\n“新室友？”\n\n白景朝你微笑。",
+      chapter1: {
+        text: "你走进303寝室，四个男生抬头望向你。\n\n白景笑着说：“欢迎新室友。”",
         options: [
-          { text: "打招呼并快速整理床铺", next: "end", effect: { "白景": 10, "mood": 5 } },
-          { text: "假装冷淡点头", next: "end", effect: { "沈墨": 5, "courage": -5 } }
+          { text: "跟白景打招呼", next: "end", effect: { "白景": 10 } },
+          { text: "躲到床边低头整理", next: "end", effect: { "沈墨": 5 } }
         ]
       },
       end: {
-        text: "✨ 剧情体验结束，完整版正在开发中……",
+        text: "✨ 试玩结束，完整版正在加载……",
         options: []
       }
     };
 
-    function updateStatus() {
-      document.getElementById("mood").innerText = state.mood;
-      document.getElementById("courage").innerText = state.courage;
-      document.getElementById("bj").innerText = state.affection["白景"];
-      document.getElementById("gbc").innerText = state.affection["顾北辰"];
-      document.getElementById("sm").innerText = state.affection["沈墨"];
-    }
-
-    function renderScene(key) {
-      const scene = scenes[key];
-      state.currentScene = key;
+    function render(sceneKey) {
+      const scene = storyData[sceneKey];
+      state.currentScene = sceneKey;
       document.getElementById("story").innerText = scene.text;
-      const optArea = document.getElementById("options");
-      optArea.innerHTML = "";
+      const container = document.getElementById("options");
+      container.innerHTML = "";
       scene.options.forEach(opt => {
-        const div = document.createElement("div");
-        div.className = "option";
-        div.innerText = opt.text;
-        div.onclick = () => {
+        const btn = document.createElement("div");
+        btn.className = "option";
+        btn.innerText = opt.text;
+        btn.onclick = () => {
           if (opt.effect) {
-            for (let k in opt.effect) {
-              if (state[k] !== undefined) state[k] += opt.effect[k];
-              if (state.affection[k] !== undefined) state.affection[k] += opt.effect[k];
-            }
+            Object.keys(opt.effect).forEach(k => {
+              if (k in state) state[k] += opt.effect[k];
+              if (state.affection[k] != null) state.affection[k] += opt.effect[k];
+            });
           }
           updateStatus();
-          renderScene(opt.next);
+          render(opt.next);
         };
-        optArea.appendChild(div);
+        container.appendChild(btn);
       });
     }
 
+    function updateStatus() {
+      document.getElementById("mood").innerText = state.mood;
+      document.getElementById("courage").innerText = state.courage;
+      document.getElementById("affection_bj").innerText = state.affection["白景"];
+      document.getElementById("affection_gbc").innerText = state.affection["顾北辰"];
+      document.getElementById("affection_sm").innerText = state.affection["沈墨"];
+    }
+
+    function saveGame() {
+      localStorage.setItem("nvban_mobile_save", JSON.stringify(state));
+      alert("✅ 游戏已保存！");
+    }
+
+    function loadGame() {
+      const data = localStorage.getItem("nvban_mobile_save");
+      if (data) {
+        Object.assign(state, JSON.parse(data));
+        updateStatus();
+        render(state.currentScene);
+        alert("✅ 存档已读取！");
+      } else {
+        alert("⚠️ 没有找到存档！");
+      }
+    }
+
     updateStatus();
-    renderScene(state.currentScene);
+    render(state.currentScene);
   </script>
 </body>
 </html>
