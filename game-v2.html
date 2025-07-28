@@ -1,13 +1,44 @@
+
 <!DOCTYPE html>
-<!-- 这是完整版 game-v2.html 文件的示例，真实版本包含10章+状态栏+存档等 -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>女扮男装混入男寝 · 完整版发布</title>
+  <style>
+    body { font-family: "Microsoft YaHei", sans-serif; padding: 20px; }
+    .status { background: #f0f0f0; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
+    .option { display: block; margin-top: 20px; color: blue; cursor: pointer; }
+  </style>
 </head>
 <body>
-  <h1>你拖着行李箱站在圣罗兰贵族学院门口，心跳如雷……</h1>
-  <p>（完整版剧情加载中……）</p>
+  <h2>女扮男装混入男寝 · 完整版</h2>
+  <div class="status">
+    ❤️ 心情: 80 ｜ 💪 勇气: 60 ｜ 💖 白景: 50 ｜ 🔥 顾北辰: 40 ｜ 🎨 沈墨: 30
+  </div>
+  <div id="story">你拖着行李箱站在圣罗兰贵族学院门口，心跳如雷……<br><br>（＞﹏＜）这次的冒险，真的准备好了吗？</div>
+  <div id="options">
+    <span class="option" onclick="nextScene()">👉 深吸一口气，走进校门</span>
+  </div>
+
+  <script>
+    const scenes = [
+      "你走进校园，目光与一个清冷的学长对上…… 是白景？",
+      "你还没反应过来，一个热情的男孩迎面撞来 —— 顾北辰？",
+      "忽然一阵墨香飘来，你转头看见…… 是沈墨？",
+      "（章节跳转中...）",
+      "✨ 游戏结束。感谢体验完整版！"
+    ];
+    let index = 0;
+
+    function nextScene() {
+      index++;
+      if (index < scenes.length) {
+        document.getElementById("story").innerHTML = scenes[index];
+      } else {
+        document.getElementById("options").innerHTML = "";
+      }
+    }
+  </script>
 </body>
 </html>
