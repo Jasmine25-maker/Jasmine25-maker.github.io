@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>女扮男装混入男寝</title>
+  <style>
+    body { font-family: "Microsoft YaHei", sans-serif; background: #f0f0f0; margin: 0; padding: 20px; }
+    .card-container { max-width: 800px; margin: auto; background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .game-title { font-size: 24px; color: #5d9cec; text-align: center; }
+    .story-text { white-space: pre-line; line-height: 1.6; margin-top: 20px; }
+    .option { margin-top: 15px; padding: 10px; background: #e1f0fa; border-radius: 8px; cursor: pointer; }
+    .option:hover { background: #d0e6f7; }
+  </style>
+</head>
+<body>
+  <div class="card-container">
+    <h1 class="game-title">女扮男装混入男寝</h1>
+    <div class="story-text" id="story"></div>
+    <div id="options"></div>
+  </div>
+
+  <script>
+    const storyData = {
+      start: {
+        text: "你拖着行李箱站在圣罗兰贵族学院的大门前，心跳如雷。\n\n(＞﹏＜) 天啊...我真的要女扮男装混进男寝吗？哥哥你可害惨我了...\n\n为了不让父亲发现哥哥已经逃到国外，你不得不假扮成双胞胎哥哥林小冬进入这所名校。\n\n你深吸一口气，推了推鼻梁上的黑框眼镜，挺直腰板走进校园。\n\n按照指示，你来到了分配的宿舍——303室。推开门，你看到四个男生各自忙碌着...",
+        options: [
+          { text: "礼貌地打招呼，然后快速整理自己的床铺", next: "intro1" },
+          { text: "装作高冷的样子，简单点头示意", next: "intro2" },
+          { text: "主动帮忙整理宿舍，展现友好", next: "intro3" }
+        ]
+      },
+      intro1: {
+        text: "你微微一鞠躬：“大家好，我是林小冬，请多指教。”\n金发混血男生白景第一个站起来，笑着伸出手：“欢迎新室友！我是白景。”\n你微笑回应，心里却异常紧张……",
+        options: [
+          { text: "继续与白景交谈", next: "end" },
+          { text: "默默整理床铺", next: "end" }
+        ]
+      },
+      intro2: {
+        text: "你点点头，没有说话。室友们对你投来诧异的目光，气氛略显尴尬。",
+        options: [
+          { text: "解释自己有点紧张", next: "end" },
+          { text: "继续保持沉默", next: "end" }
+        ]
+      },
+      intro3: {
+        text: "你走过去帮白景整理书桌。他回头对你笑了笑：“谢谢你呀，新室友！”\n其他人也投来友善的目光。",
+        options: [
+          { text: "问大家的名字", next: "end" },
+          { text: "回到自己的床铺", next: "end" }
+        ]
+      },
+      end: {
+        text: "故事暂时到这里，更多剧情开发中……谢谢你的体验！",
+        options: []
+      }
+    };
+
+    function renderScene(sceneKey) {
+      const scene = storyData[sceneKey];
+      document.getElementById("story").innerText = scene.text;
+      const optionsDiv = document.getElementById("options");
+      optionsDiv.innerHTML = "";
+      scene.options.forEach(opt => {
+        const btn = document.createElement("div");
+        btn.className = "option";
+        btn.innerText = opt.text;
+        btn.onclick = () => renderScene(opt.next);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    // 初始化
+    renderScene("start");
+  </script>
+</body>
+</html>
