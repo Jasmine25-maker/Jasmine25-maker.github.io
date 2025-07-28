@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>女扮男装混入男寝 · 游戏开始</title>
+  <style>
+    body { font-family: "Microsoft YaHei", sans-serif; margin: 0; background: #f9f9f9; color: #333; }
+    .container { max-width: 480px; margin: auto; padding: 16px; background: #fff; min-height: 100vh; box-sizing: border-box; }
+    .status-bar { background: #eef6ff; padding: 8px; border-radius: 6px; font-size: 14px; margin-bottom: 12px; text-align: center; }
+    .story { font-size: 16px; line-height: 1.6; white-space: pre-line; }
+    .option { background: #e1f0fa; padding: 12px; border-radius: 6px; margin: 10px 0; text-align: center; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 style="text-align:center; color:#5d9cec;">女扮男装混入男寝</h2>
+    <div class="status-bar">
+      ❤️ 心情: <span id="mood">80</span> ｜ 💪 勇气: <span id="courage">60</span><br>
+      💖 白景: <span id="bj">50</span> ｜🔥 顾北辰: <span id="gbc">40</span> ｜🎨 沈墨: <span id="sm">30</span>
+    </div>
+    <div class="story" id="story">游戏加载中……</div>
+    <div id="options"></div>
+  </div>
+
+  <script>
+    const state = {
+      mood: 80,
+      courage: 60,
+      affection: { "白景": 50, "顾北辰": 40, "沈墨": 30 },
+      currentScene: "start"
+    };
+
+    const scenes = {
+      start: {
+        text: "你拖着行李箱站在圣罗兰贵族学院门口……\n\n“我真的要女扮男装混进男寝吗？”",
+        options: [
+          { text: "推门进入303寝室", next: "firstNight" }
+        ]
+      },
+      firstNight: {
+        text: "宿舍灯光昏黄，四个男生回头望向你。\n\n“新室友？”\n\n白景朝你微笑。",
+        options: [
+          { text: "打招呼并快速整理床铺", next: "end", effect: { "白景": 10, "mood": 5 } },
+          { text: "假装冷淡点头", next: "end", effect: { "沈墨": 5, "courage": -5 } }
+        ]
+      },
+      end: {
+        text: "✨ 剧情体验结束，完整版正在开发中……",
+        options: []
+      }
+    };
+
+    function updateStatus() {
+      document.getElementById("mood").innerText = state.mood;
+      document.getElementById("courage").innerText = state.courage;
+      document.getElementById("bj").innerText = state.affection["白景"];
+      document.getElementById("gbc").innerText = state.affection["顾北辰"];
+      document.getElementById("sm").innerText = state.affection["沈墨"];
+    }
+
+    function renderScene(key) {
+      const scene = scenes[key];
+      state.currentScene = key;
+      document.getElementById("story").innerText = scene.text;
+      const optArea = document.getElementById("options");
+      optArea.innerHTML = "";
+      scene.options.forEach(opt => {
+        const div = document.createElement("div");
+        div.className = "option";
+        div.innerText = opt.text;
+        div.onclick = () => {
+          if (opt.effect) {
+            for (let k in opt.effect) {
+              if (state[k] !== undefined) state[k] += opt.effect[k];
+              if (state.affection[k] !== undefined) state.affection[k] += opt.effect[k];
+            }
+          }
+          updateStatus();
+          renderScene(opt.next);
+        };
+        optArea.appendChild(div);
+      });
+    }
+
+    updateStatus();
+    renderScene(state.currentScene);
+  </script>
+</body>
+</html>
