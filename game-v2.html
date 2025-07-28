@@ -2,42 +2,61 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>女扮男装混入男寝 · 完整版发布</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>女扮男装混入男寝 · 完整版</title>
   <style>
-    body { font-family: "Microsoft YaHei", sans-serif; padding: 20px; }
-    .status { background: #f0f0f0; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
-    .option { display: block; margin-top: 20px; color: blue; cursor: pointer; }
+    body { font-family: "微软雅黑", sans-serif; margin: 0; padding: 20px; background: #f5f7fa; }
+    .status-bar { background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 0 4px rgba(0,0,0,0.1); margin-bottom: 10px; }
+    .status-bar span { margin-right: 10px; }
+    .story { margin: 20px 0; line-height: 1.8; }
+    .options { margin-top: 20px; }
+    .option-btn {
+      display: block;
+      background: #e0f0ff;
+      border: 1px solid #90caf9;
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .option-btn:hover { background: #bbdefb; }
   </style>
 </head>
 <body>
-  <h2>女扮男装混入男寝 · 完整版</h2>
-  <div class="status">
+  <h2>《女扮男装混入男寝》· 完整版</h2>
+  <div class="status-bar" id="status">
     ❤️ 心情: 80 ｜ 💪 勇气: 60 ｜ 💖 白景: 50 ｜ 🔥 顾北辰: 40 ｜ 🎨 沈墨: 30
   </div>
-  <div id="story">你拖着行李箱站在圣罗兰贵族学院门口，心跳如雷……<br><br>（＞﹏＜）这次的冒险，真的准备好了吗？</div>
-  <div id="options">
-    <span class="option" onclick="nextScene()">👉 深吸一口气，走进校门</span>
+  <div class="story" id="story">
+    你拖着行李箱站在圣罗兰贵族学院门口，心跳如雷……<br>
+    （＞﹏＜）这次的冒险，真的准备好了吗？
+  </div>
+  <div class="options" id="options">
+    <div class="option-btn" onclick="nextScene(1)">深吸一口气，走进校门</div>
   </div>
 
   <script>
+    let currentScene = 0;
     const scenes = [
-      "你走进校园，目光与一个清冷的学长对上…… 是白景？",
-      "你还没反应过来，一个热情的男孩迎面撞来 —— 顾北辰？",
-      "忽然一阵墨香飘来，你转头看见…… 是沈墨？",
-      "（章节跳转中...）",
-      "✨ 游戏结束。感谢体验完整版！"
+      "你拖着行李箱站在圣罗兰贵族学院门口，心跳如雷……",
+      "你刚进寝室，一个俊秀少年站起：'你是新生？我叫白景。'",
+      "第二天，顾北辰递给你一瓶水：'新同学，军训可别倒下哦。'",
+      "你在图书馆偶遇沈墨，他淡淡一笑：'我们，好像见过。'",
+      "你在餐厅同时遇到三人，他们目光交错，气氛微妙……",
+      "你选择与白景同行，他沉默中多了一丝温柔。",
+      "你选择与顾北辰一起打篮球，他笑得灿烂无比。",
+      "你选择坐下听沈墨弹琴，他神情专注而温柔。",
+      "学园祭上，你站在舞台中央，三道视线落在你身上……",
+      "✨ 故事完结，你的心动对象是：白景。感谢体验完整版！"
     ];
-    let index = 0;
 
-    function nextScene() {
-      index++;
-      if (index < scenes.length) {
-        document.getElementById("story").innerHTML = scenes[index];
-      } else {
+    function nextScene(step) {
+      currentScene += step;
+      if (currentScene >= scenes.length) {
         document.getElementById("options").innerHTML = "";
       }
+      document.getElementById("story").innerHTML = scenes[currentScene];
     }
   </script>
 </body>
