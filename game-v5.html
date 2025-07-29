@@ -2,288 +2,57 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <link rel="manifest" href="manifest.json">
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
-  </script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>女扮男装混入男寝 · 前3章预览</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>女扮男装混入男寝 · 完整版</title>
   <style>
-    body { font-family: "微软雅黑", sans-serif; padding: 20px; background: #f7f9fc; }
-    .status { background: #fff; padding: 10px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 0 3px rgba(0,0,0,0.1); }
-    .status span { margin-right: 10px; }
-    .story { margin: 20px 0; }
-    .option { background: #e3f2fd; margin: 10px 0; padding: 10px; border-radius: 6px; cursor: pointer; }
-    .option:hover { background: #bbdefb; }
+    body { font-family: "Microsoft YaHei", sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+    .container { max-width: 480px; margin: auto; padding: 16px; background: #fff; min-height: 100vh; box-sizing: border-box; }
+    .game-title { font-size: 22px; font-weight: bold; color: #4a90e2; text-align: center; margin-bottom: 12px; }
+    .status-bar { font-size: 14px; background: #eef5ff; padding: 10px; border-radius: 6px; margin-bottom: 10px; }
+    .story-text { font-size: 16px; line-height: 1.6; margin-bottom: 20px; white-space: pre-line; }
+    .option { display: block; margin: 8px 0; padding: 10px; background: #e0f0ff; border-radius: 6px; text-align: center; cursor: pointer; }
+    .option:hover { background: #cfe6ff; }
   </style>
 </head>
 <body>
-  <h2>《女扮男装混入男寝》 · 剧情预览（前3章）</h2>
-  <div class="status">
-    ❤️ 心情: <span id="mood">80</span> ｜ 💪 勇气: <span id="courage">60</span>｜
-    💖 白景: <span id="bj">0</span> ｜ 🔥 顾北辰: <span id="gbc">0</span> ｜ 🎨 沈墨: <span id="sm">0</span>
+  <div class="container">
+    <div class="game-title">女扮男装混入男寝 · 完整版</div>
+    <div class="status-bar" id="statusBar"></div>
+    <div class="story-text" id="storyText">加载中…</div>
+    <div id="options"></div>
   </div>
 
-  <div class="story" id="story">你拖着行李箱站在圣罗兰贵族学院门口，心跳如雷……</div>
-  <div id="options"></div>
-
   <script>
-    let stats = {
-      mood: 80,
-      courage: 60,
-      bj: 0,
-      gbc: 0,
-      sm: 0
+    const status = {
+      heart: 80, courage: 60, bj: 50, gbc: 40, sm: 30
     };
 
-    const scenes = {
-      chapter1: {
-        text: "第一章 · 入学日\n你站在校门口，穿着刚买的新校服，男生制服不太合身，但你努力挺直腰背。身边同学陆续进校——你必须马上适应新生活。",
-        options: [
-          { text: "假装镇定，低头快步走进校门", next: "chapter2", mood: -5, courage: +5 },
-          { text: "大方打招呼，展示自信一面", next: "chapter2", mood: +5, courage: +10 }
-        ]
-      },
-      chapter2: {
-        text: "第二章 · 寝室相遇\n你被分到A栋402宿舍，推门而入，三位性格迥异的男生正好同时看向你——白景坐在窗边看书，顾北辰在床上打球，沈墨靠墙淡淡看着你。",
-        options: [
-          { text: "主动向白景介绍自己", next: "bj1", bj: +10 },
-          { text: "对顾北辰打趣一句", next: "gbc1", gbc: +10 },
-          { text: "与沈墨保持沉默点头示意", next: "sm1", sm: +10 }
-        ]
-      },
-      bj1: {
-        text: "白景轻轻点头，没有回应太多，但目光在你身上停留了几秒。",
-        options: [{ text: "继续", next: "chapter3" }]
-      },
-      gbc1: {
-        text: "“打得不错。”你笑着说。顾北辰眨眨眼：“你也爱篮球？来场？”",
-        options: [{ text: "继续", next: "chapter3" }]
-      },
-      sm1: {
-        text: "沈墨语气平静：“你是新室友？”他没多问，却也没有疏远。",
-        options: [{ text: "继续", next: "chapter3" }]
-      },
-      chapter3: {
-        text: "第三章 · 军训试炼\n开学第三天，你站在操场，阳光炙烤。体力逐渐下降，你感到天旋地转——",
-        options: [
-          { text: "坚持咬牙不倒下", next: "endurance", courage: +10 },
-          { text: "偷偷退出排队去休息", next: "retreat", mood: +5 }
-        ]
-      },
-      endurance: {
-        text: "你咬牙站稳，顾北辰走过来递给你一瓶水：“可以啊你，撑得挺久。”",
-        options: []
-      },
-      retreat: {
-        text: "你坐在树荫下，沈墨默默递来纸巾：“别逞强。”白景站在远处看了你一眼。",
-        options: []
-      }
-    };
+    function renderStatus() {
+      statusBar.innerHTML =
+        `❤️ 心情: ${status.heart}  ｜ 💪 勇气: ${status.courage}  ｜ 💖 白景: ${status.bj}  ｜ 🔥 顾北辰: ${status.gbc}  ｜ 🎨 沈墨: ${status.sm}`;
+    }
 
-    let current = "chapter1";
-
-    function renderScene(key) {
-      current = key;
-      const s = scenes[key];
-      document.getElementById("story").innerText = s.text.replace(/\n/g, "\n");
-      const opts = document.getElementById("options");
-      opts.innerHTML = "";
+    function setScene(scene) {
+      const s = scenes[scene];
+      storyText.innerText = s.text;
+      options.innerHTML = '';
       (s.options || []).forEach(opt => {
-        const btn = document.createElement("div");
-        btn.className = "option";
+        const btn = document.createElement('div');
+        btn.className = 'option';
         btn.innerText = opt.text;
         btn.onclick = () => {
-          for (let key in opt) {
-            if (stats[key] !== undefined) stats[key] += opt[key];
-          }
-          renderScene(opt.next);
+          if (opt.bj) status.bj += opt.bj;
+          if (opt.gbc) status.gbc += opt.gbc;
+          if (opt.sm) status.sm += opt.sm;
+          if (opt.heart) status.heart += opt.heart;
+          if (opt.courage) status.courage += opt.courage;
+          renderStatus();
+          if (opt.next) setScene(opt.next);
         };
-        opts.appendChild(btn);
+        options.appendChild(btn);
       });
-      updateStatus();
     }
 
-    function updateStatus() {
-      document.getElementById("mood").innerText = stats.mood;
-      document.getElementById("courage").innerText = stats.courage;
-      document.getElementById("bj").innerText = stats.bj;
-      document.getElementById("gbc").innerText = stats.gbc;
-      document.getElementById("sm").innerText = stats.sm;
-    }
-
-    renderScene(current);
+    const scenes = {};
   </script>
-</body>
-</html>
-
-<!-- 追加场景到现有 HTML 中的 <script> 结构里 -->
-
-<script>
-  // ...（省略前3章定义）...
-
-  scenes.chapter4 = {
-    text: "第四章 · 社团招新\n你被三位男生分别邀请进入不同社团——",
-    options: [
-      { text: "加入摄影社（白景）", next: "photo_club", bj: +10 },
-      { text: "加入篮球队（顾北辰）", next: "basketball_team", gbc: +10 },
-      { text: "加入美术社（沈墨）", next: "art_club", sm: +10 }
-    ]
-  };
-
-  scenes.photo_club = {
-    text: "你跟着白景走进摄影社，他亲手教你调焦：“不光是镜头，眼睛也要观察人。”",
-    options: [{ text: "继续", next: "chapter5" }]
-  };
-
-  scenes.basketball_team = {
-    text: "球场上你跟着顾北辰练习传球，他笑着说：“你还挺能跑的啊！”",
-    options: [{ text: "继续", next: "chapter5" }]
-  };
-
-  scenes.art_club = {
-    text: "你静静看着沈墨在画板上挥笔，他递给你一张速写：“这是你的侧脸。”",
-    options: [{ text: "继续", next: "chapter5" }]
-  };
-
-  scenes.chapter5 = {
-    text: "第五章 · 意外独处\n社团结束后，你被角色留下，展开一段只属于你们的对话——",
-    options: [
-      { text: "回应白景：“你很温柔。”", next: "bj_deep", bj: +10 },
-      { text: "向顾北辰夸赞：“你很有趣。”", next: "gbc_deep", gbc: +10 },
-      { text: "感谢沈墨：“我很喜欢这幅画。”", next: "sm_deep", sm: +10 }
-    ]
-  };
-
-  scenes.bj_deep = {
-    text: "白景微微一愣：“我……不是一直都这样。”他的声音压得很低。",
-    options: [{ text: "继续", next: "chapter6" }]
-  };
-
-  scenes.gbc_deep = {
-    text: "顾北辰扬眉一笑：“你也是我见过最不普通的人。”",
-    options: [{ text: "继续", next: "chapter6" }]
-  };
-
-  scenes.sm_deep = {
-    text: "沈墨轻声说：“你笑起来，比画好看。”他低头避开你的眼神。",
-    options: [{ text: "继续", next: "chapter6" }]
-  };
-
-  scenes.chapter6 = {
-    text: "第六章 · 校园危机\n你不小心丢了重要证件，陷入焦虑。你会——",
-    options: [
-      { text: "主动去找白景求助", next: "bj_help", bj: +5 },
-      { text: "向顾北辰大声求援", next: "gbc_help", gbc: +5 },
-      { text: "不出声，等待沈墨察觉", next: "sm_help", sm: +5 }
-    ]
-  };
-
-  scenes.bj_help = {
-    text: "白景冷静分析路径，陪你一间间找：“别怕，我在。”",
-    options: [{ text: "继续", next: "chapter7" }]
-  };
-
-  scenes.gbc_help = {
-    text: "顾北辰立刻冲出去跑遍全校：“一定能找到！你别急啊！”",
-    options: [{ text: "继续", next: "chapter7" }]
-  };
-
-  scenes.sm_help = {
-    text: "沈墨看出你失落，什么都没问就递来证件：“我捡到的，刚刚。”",
-    options: [{ text: "继续", next: "chapter7" }]
-  };
-</script>
-
-<script>
-  scenes.chapter7 = {
-    text: "第七章 · 校外游\n学院组织郊游活动，阳光明媚，你将与谁结伴同行？",
-    options: [
-      { text: "与白景同行", next: "trip_bj", bj: +10 },
-      { text: "与顾北辰一起", next: "trip_gbc", gbc: +10 },
-      { text: "选择沈墨", next: "trip_sm", sm: +10 }
-    ]
-  };
-
-  scenes.trip_bj = {
-    text: "白景默默替你提包，走在你身侧：“我不习惯人多，但……和你一起，不错。”",
-    options: [{ text: "继续", next: "chapter8" }]
-  };
-  scenes.trip_gbc = {
-    text: "顾北辰拍照、抓虫、笑声不断：“跟你玩真轻松！”",
-    options: [{ text: "继续", next: "chapter8" }]
-  };
-  scenes.trip_sm = {
-    text: "沈墨给你画了一张山景速写：“这地方像你，静静的，但让人喜欢。”",
-    options: [{ text: "继续", next: "chapter8" }]
-  };
-
-  scenes.chapter8 = {
-    text: "第八章 · 身份暴露\n一次洗衣时，你藏好的假身份证掉出，被三人之一发现，你的秘密暴露了！",
-    options: [
-      { text: "被白景看到", next: "reveal_bj" },
-      { text: "被顾北辰看到", next: "reveal_gbc" },
-      { text: "被沈墨看到", next: "reveal_sm" }
-    ]
-  };
-
-  scenes.reveal_bj = {
-    text: "白景沉默很久才问：“为什么……要这样做？”他的声音有点颤。",
-    options: [{ text: "继续", next: "chapter9" }]
-  };
-  scenes.reveal_gbc = {
-    text: "顾北辰目瞪口呆：“你是……女生？我居然一点没发现……”",
-    options: [{ text: "继续", next: "chapter9" }]
-  };
-  scenes.reveal_sm = {
-    text: "沈墨低头笑了笑：“我早就猜到，只是没说。”",
-    options: [{ text: "继续", next: "chapter9" }]
-  };
-
-  scenes.chapter9 = {
-    text: "第九章 · 情绪低谷\n你觉得自己无法再面对他们，准备收拾东西离开。",
-    options: [
-      { text: "白景站在门口：“别躲了，我在这里。”", next: "comfort_bj", bj: +10 },
-      { text: "顾北辰追到楼下：“你走，我会难过的。”", next: "comfort_gbc", gbc: +10 },
-      { text: "沈墨在床头放下一幅画：“这是我画的你，不许走。”", next: "comfort_sm", sm: +10 }
-    ]
-  };
-
-  scenes.comfort_bj = {
-    text: "你望着白景坚定的眼神，眼泪终于落下。",
-    options: [{ text: "继续", next: "chapter10" }]
-  };
-  scenes.comfort_gbc = {
-    text: "你听到顾北辰的声音忍不住哭出来，他把你抱得紧紧的。",
-    options: [{ text: "继续", next: "chapter10" }]
-  };
-  scenes.comfort_sm = {
-    text: "你看到那幅画，仿佛有人真正理解你，你的心开始软下来。",
-    options: [{ text: "继续", next: "chapter10" }]
-  };
-
-  scenes.chapter10 = {
-    text: "第十章 · 结局抉择\n你终于做出决定——要告诉谁你的真心？",
-    options: [
-      { text: "选择白景", next: "ending_bj" },
-      { text: "选择顾北辰", next: "ending_gbc" },
-      { text: "选择沈墨", next: "ending_sm" }
-    ]
-  };
-
-  scenes.ending_bj = {
-    text: "白景轻轻拉住你的手：“我们一起面对世界，别怕。”",
-    options: []
-  };
-  scenes.ending_gbc = {
-    text: "顾北辰举起你们的合照：“以后，我们继续一起胡闹。”",
-    options: []
-  };
-  scenes.ending_sm = {
-    text: "沈墨用最柔的声音说：“我笔下的你，终于属于我了。”",
-    options: []
-  };
-</script>
