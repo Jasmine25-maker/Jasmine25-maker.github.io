@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>女扮男装混入男寝 · 扩展测试版</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { font-family: '微软雅黑'; background: #f6f8fb; padding: 20px; }
+    .status-bar { background: #dfefff; padding: 10px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; }
+    .story { margin-bottom: 20px; }
+    .option { background: #e0f0ff; margin: 8px 0; padding: 10px; border-radius: 6px; cursor: pointer; }
+    .option:hover { background: #cfe6ff; }
+    .modal, .overlay {
+      display: none; position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+    }
+    .overlay { background: rgba(0,0,0,0.5); z-index: 5; }
+    .modal {
+      background: #fff; margin: 10% auto; width: 90%; max-width: 400px; padding: 20px;
+      z-index: 10; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .portrait { width: 100px; float: right; margin-left: 10px; border-radius: 10px; }
+    #extraBtn { display: none; margin-top: 12px; padding: 10px; background: #ffefc2; border-radius: 6px; text-align: center; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h2>《女扮男装混入男寝》 · v6 扩展测试</h2>
+
+  <div class="status-bar" onclick="showCharacterInfo()">
+    ❤️ 心情: <span id="mood">80</span> ｜ 💪 勇气: <span id="courage">60</span>｜
+    💖 白景: <span id="bj">0</span> ｜ 🔥 顾北辰: <span id="gbc">0</span> ｜ 🎨 沈墨: <span id="sm">0</span>
+  </div>
+
+  <div id="story">你站在礼堂门口，毕业典礼即将开始。</div>
+  <div id="options"></div>
+
+  <div id="extraBtn" onclick="showExtra()">📖 已解锁番外：点击进入</div>
+
+  <div class="overlay" id="overlay" onclick="hideAll()"></div>
+
+  <div class="modal" id="charModal">
+    <h3>角色信息</h3>
+    <img class="portrait" src="https://via.placeholder.com/100x150.png?text=白景" />
+    <p><strong>白景：</strong>冷静寡言，外表克制但极其细腻。</p>
+    <p>当前好感值：<span id="valBJ">0</span></p>
+    <p>语录：“我不说，并不代表我不在意。”</p>
+  </div>
+
+  <div class="modal" id="extraModal">
+    <h3>📖 番外 · 白景 · 回忆之光</h3>
+    <p>“还记得那个夏天，你第一次冲我笑的时候。”</p>
+    <p>白景推开窗，阳光正好：“从那天起，我就再没移开过目光。”</p>
+  </div>
+
+  <script>
+    let stats = { mood: 80, courage: 60, bj: 100, gbc: 0, sm: 0 };
+    let unlocked = false;
+
+    function updateStatus() {
+      document.getElementById("mood").innerText = stats.mood;
+      document.getElementById("courage").innerText = stats.courage;
+      document.getElementById("bj").innerText = stats.bj;
+      document.getElementById("gbc").innerText = stats.gbc;
+      document.getElementById("sm").innerText = stats.sm;
+    }
+
+    const scenes = {
+      ending_bj: {
+        text: "白景轻轻拉住你的手：“我们一起面对世界，别怕。”",
+        options: [{ text: "【解锁番外】", next: "unlock_extra" }]
+      },
+      unlock_extra: {
+        text: "你已成功解锁白景结局番外。",
+        options: [{ text: "返回", next: "ending_bj" }]
+      }
+    };
+
+    function renderScene(key) {
+      const scene = scenes[key];
+      document.getElementById("story").innerText = scene.text;
+      const opt = document.getElementById("options");
+      opt.innerHTML = '';
+      scene.options.forEach(o => {
+        const div = document.createElement("div");
+        div.className = "option";
+        div.innerText = o.text;
+        div.onclick = () => {
+          if (key === "ending_bj") {
+            stats.bj = 100; // 自动满好感
+          }
+          if (o.next === "unlock_extra") {
+            unlocked = true;
+            document.getElementById("extraBtn").style.display = "block";
+          }
+          renderScene(o.next);
+        };
+        opt.appendChild(div);
+      });
+      updateStatus();
+    }
+
+    function showCharacterInfo() {
+      document.getElementById("overlay").style.display = "block";
+      document.getElementById("charModal").style.display = "block";
+      document.getElementById("valBJ").innerText = stats.bj;
+    }
+
+    function showExtra() {
+      document.getElementById("overlay").style.display = "block";
+      document.getElementById("extraModal").style.display = "block";
+    }
+
+    function hideAll() {
+      document.getElementById("overlay").style.display = "none";
+      document.querySelectorAll(".modal").forEach(m => m.style.display = "none");
+    }
+
+    updateStatus();
+    renderScene("ending_bj");
+  </script>
+</body>
+</html>
